@@ -67,6 +67,37 @@ df$depth_levels <- factor(df$depth_levels)
 ```
 
 
+### Summarize Data
+
+```{r}
+summary(df)
+```
+
+### Visualize data
+
+#### Pairs
+
+```{r fig.width = 12, fig.height=12}
+pairs.panels(df %>% select(totalLength, totalLength_T, 
+                           surfaceArea, surfaceArea_T, 
+                           volume, volume_T, 
+                           radiiAvg, radiiAvg_T, 
+                           radiiSD, radiiSD_T), 
+             col="red", lm = TRUE, rug = TRUE, ps = 0.1)
+```
+
+#### Observed Zeros
+
+Notice that most of the observations where `volume=0` correspond to 'true' volumes greater than 0, and the true volume is always > 0 except in the deepest layers. This is what we should expect. 
+
+```{r}
+ggplot(data = df) +
+  geom_point(aes(volume, volume_T, color = depth), alpha = 0.25, size = 0.1) +
+  scale_color_gradientn(colours = rainbow(10))
+```
+
+### Analyze
+
 ```{r,  results="hide"}
 # install.packages(pkgs = c('Hmisc', 'psych', 'car', 'ggplot2', 'rgl', 'lazyeval'), dependencies = TRUE)
 # install.packages("Hmisc", dependencies = TRUE)
@@ -91,7 +122,7 @@ plot(vol_by_trial, vol_by_trial_T)
 ```
 
 ```{r, echo=TRUE}
-fit <- lm(volume_T~volume+depth, data=df)
+fit <- lm(volume_T ~ volume + depth, data=df)
 summary(fit)
 vif(fit)
 ```
